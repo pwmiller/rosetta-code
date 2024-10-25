@@ -1,0 +1,19 @@
+(* rosettacode URL: https://rosettacode.org/wiki/Jordan-P%C3%B3lya_numbers#Mathematica_/_Wolfram_Language *)
+
+(* Bonus task TBD *)
+
+ClearAll[JPNumbers, largestUnder100M];
+
+JPNumbers [n_Integer?Positive] := 
+    Module[{factorials = Table[k!, {k, 1, n}]},
+           Return [FixedPoint[Select[Union @@ Outer[Times, factorials, #], (# <= n! &)] &, {1}]];
+    ];
+
+jpNumbers = JPNumbers[19];
+largestUnder100M = Max@Select[# < 10^8 &][jpNumbers];
+
+(* Output *)
+
+Print["First 50 Jordan-Pólya numbers:"];
+Print[StringJoin@Riffle[Partition[StringPadLeft[#, 8] & /@ ToString /@ jpNumbers[[1 ;; 50]], UpTo[10]], "\n"]];
+Print["The largest Jordan-Pólya number less than 100 million: ", largestUnder100M];
