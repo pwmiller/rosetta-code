@@ -1,4 +1,7 @@
-ClearAll[primesUpTo, tetraprimeQ, limit, primesUpToLimit, primesWithPreceedingTetraprimePairs, primesWithFollowingTetraprimePairs];
+(* rosettacode-url: https://rosettacode.org/wiki/Prime_numbers_whose_neighboring_pairs_are_tetraprimes#Mathematica_/_Wolfram_Language *)
+
+ClearAll[primesUpTo, tetraprimeQ, limit, primesUpToLimit, primesWithPreceedingTetraprimePairs,
+  primesWithFollowingTetraprimePairs];
 
 primesUpTo[n_Integer?Positive] := Prime[Range[PrimePi[n]]];
 
@@ -7,48 +10,46 @@ tetraprimeQ[n_Integer] := FactorInteger[n][[All, 2]] == {1, 1, 1, 1};
 limit = 10^7;
 primesUpToLimit = primesUpTo[limit];
 primesWithPreceedingTetraprimePairs = Select[primesUpToLimit, tetraprimeQ[# - 1] && tetraprimeQ[# - 2] &];
-primesWithFollowingTetraprimePairs  = Select[primesUpToLimit, tetraprimeQ[# + 1] && tetraprimeQ[# + 2] &];
+primesWithFollowingTetraprimePairs = Select[primesUpToLimit, tetraprimeQ[# + 1] && tetraprimeQ[# + 2] &];
 
 formatPrimesList[primes_List] :=
-    TableForm@
-             Partition[
-                 StringPadLeft[ToString[#], Length@IntegerDigits@Max@primes] & /@primes,
-                 UpTo[10]];
+  TableForm@
+   Partition[
+    StringPadLeft[ToString[#], Length@IntegerDigits@Max@primes] & /@
+     primes, UpTo[10]];
 
-showOutput[n_Integer?Positive] :=
-    Module[{preceeding, following,
-            numberFollowingWithOneOfPairDivisibleBy7,
-            numberPreceedingWithOneOfPairDivisibleBy7, differences},
-           preceeding = Select[primesWithPreceedingTetraprimePairs, # <= n &];
-           numberPreceedingWithOneOfPairDivisibleBy7 =
-           Length@Select[preceeding, 1 <= Mod[#, 7] <= 2 &];
-           following = Select[primesWithFollowingTetraprimePairs, # <= n &];
-           numberFollowingWithOneOfPairDivisibleBy7 =
-           Length@Select[following, 5 <= Mod[#, 7] <= 6 &];
+showOutput[n_Integer?Positive] := Module[{preceeding, following, numberFollowingWithOneOfPairDivisibleBy7,
+    numberPreceedingWithOneOfPairDivisibleBy7, differences},
 
-           Print[StringJoin@ConstantArray["=", 80]];
+    preceeding = Select[primesWithPreceedingTetraprimePairs, # <= n &];
+    numberPreceedingWithOneOfPairDivisibleBy7 = Length@Select[preceeding, 1 <= Mod[#, 7] <= 2 &];
+    following = Select[primesWithFollowingTetraprimePairs, # <= n &];
+    numberFollowingWithOneOfPairDivisibleBy7 = Length@Select[following, 5 <= Mod[#, 7] <= 6 &];
 
-           Print["Found ", Length@preceeding, " primes below ", n, " whose preceeding pair are tetraprimes",
-                 If[n <= 100000, ":", ","]];
-           If[n <= 100000,
-              Print@formatPrimesList@preceeding;];
-           Print["of which ", numberPreceedingWithOneOfPairDivisibleBy7, " have a neighboring pair one of whose factors is 7."];
-           differences = Differences@preceeding;
-           Print["Minimum gap between those ", Length@preceeding, " primes : ", Min@differences];
-           Print["Median  gap between those ", Length@preceeding, " primes : ", Median@differences];
-           Print["Maximum gap between those ", Length@preceeding, " primes : ", Max@differences];
+    Print[StringJoin@ConstantArray["=", 80]];
+    Print["Found ", Length@preceeding, " primes below ", n, " whose preceeding pair are tetraprimes",
+    If[n <= 100000, ":", ","]];
+    If[n <= 100000,
+        Print@formatPrimesList@preceeding;];
+    Print["of which ", numberPreceedingWithOneOfPairDivisibleBy7, " have a neighboring pair one of whose factors is 7."];
+    differences = Differences@preceeding;
+    Print["Minimum gap between those ", Length@preceeding, " primes : ", Min@differences];
+    Print["Median  gap between those ", Length@preceeding, " primes : ", Median@differences];
+    Print["Maximum gap between those ", Length@preceeding, " primes : ", Max@differences];
 
-           Print[];
+    Print[];
 
-           Print["Found ", Length@following, " primes below ", n, " whose following pair are tetraprimes",
-                 If[n <= 100000, ":", ","]];
-           If [n <= 100000,
-               Print@formatPrimesList@following;];
-           differences = Differences@following;
-           Print["Minimum gap between those ", Length@following, " primes : ", Min@differences];
-           Print["Median  gap between those ", Length@following, " primes : ", Median@differences];
-           Print["Maximum gap between those ", Length@following, " primes : ", Max@differences];
-    ];
+    Print["Found ", Length@following, " primes below ", n,
+    " whose following pair are tetraprimes",
+    If[n <= 100000, ":", ","]];
+    If [n <= 100000,
+        Print@formatPrimesList@following;];
+    Print["of which ", numberFollowingWithOneOfPairDivisibleBy7, " have a neighboring pair one of whose factors is 7."];
+    differences = Differences@following;
+    Print["Minimum gap between those ", Length@following, " primes : ", Min@differences];
+    Print["Median  gap between those ", Length@following, " primes : ", Median@differences];
+    Print["Maximum gap between those ", Length@following, " primes : ", Max@differences];
+   ];
 
 SetAttributes[showOutput, Listable];
 
